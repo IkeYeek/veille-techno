@@ -51,4 +51,4 @@ fabric.properties
 
 # *.iml
 # modules.xml
-note_modules
+node_modules

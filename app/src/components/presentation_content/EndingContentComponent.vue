@@ -1,7 +1,5 @@
 <template>
-  <div id="ending">
-    <div class="spacer"></div>
-    <h2>Lorem Ipsum Dolor Sit Amet</h2>
+    <h2>Conclusion</h2>
     <p>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eleifend finibus urna nec ultricies. Sed quis orci enim. Cras ut diam vitae orci bibendum tristique. Curabitur in sem ut massa convallis hendrerit non id magna. Donec egestas tortor vitae rutrum porttitor. Sed vestibulum ipsum a lorem convallis, sit amet sollicitudin enim dignissim. Nulla accumsan mauris ac nunc condimentum elementum. Nam sit amet erat sollicitudin, aliquet urna et, congue est. In tincidunt sit amet ipsum in accumsan. Quisque commodo lacus sed enim malesuada, eu vestibulum ipsum dictum. Sed a dui ornare, condimentum odio id, fermentum mi. Sed lacus ex, convallis a elementum et, vulputate sed diam.
 
@@ -63,57 +61,10 @@
 
       Nulla pulvinar massa euismod urna dictum, vitae euismod turpis gravida. Phasellus vestibulum pellentesque nisl non mollis. Integer feugiat tellus at libero luctus porta. Suspendisse rutrum non nisi ut cursus. Phasellus cursus mollis commodo. Cras semper ultricies auctor. Aenean lobortis, est ac venenatis lacinia, purus ex venenatis felis, eu tincidunt ligula dui quis sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus.
     </p>
-    <div class="spacer"></div>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useUiStore } from "@/stores/ui";
-const ui = useUiStore();
-const js = ref(null)
-onMounted(() => {
-  let lastScrollTop = 0;
-  let last0Hit = null;
-  let lastEndHit = null;
-  const element = document.getElementById("ending")
-  element.onwheel = (e) => {
-    if (e.deltaY < 0 && element.scrollTop == 0) {
-      lastEndHit = null;
-      const currTime = Date.now();
-      if (last0Hit == null) {
-        last0Hit = Date.now();
-      } else {
-        if (currTime > last0Hit + 250) {
-          ui.goToLastSection(3);
-        }
-      }
-    } else if(e.deltaY > 0) {
-      if (element.scrollTop < lastScrollTop){
-        return;
-      }
-      last0Hit = null;
-      lastScrollTop = element.scrollTop <= 0 ? 0 : element.scrollTop;
-      if (element.scrollTop + element.offsetHeight + 1>= element.scrollHeight ){
-        if (lastEndHit === null)
-          lastEndHit = Date.now();
-        else if (Date.now() > lastEndHit + 250){}
-      }
-    }
-  }
-});
 </script>
 
 <style scoped>
-.spacer {
-  height: 8vh;
-}
-#ending {
-  background-color: var(--fifth-color);
-  color: var(--vt-c-black-soft);
-  height: 100vh;
-  width: 100vw;
-  overflow-y: scroll;
-  padding: 2rem;
-}
 </style>

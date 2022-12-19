@@ -7,29 +7,47 @@
     </div>
     <div id="articles">
       <section ref="jsSection">
-        <JavascriptComponent />
+        <PresentationComponent
+          :content="JavascriptContentComponent"
+          :index="0"
+          bgc="--js-color"
+        />
       </section>
       <section ref="asmjsSection">
-        <ASMJSComponent />
+        <PresentationComponent
+          :content="ASMJSContentComponent"
+          :index="1"
+          bgc="--third-color"
+        />
       </section>
       <section ref="wasmSection">
-        <WASMComponent />
+        <PresentationComponent
+          :content="WASMContentComponent"
+          :index="2"
+          bgc="--wasm-color"
+        />
       </section>
       <section ref="conclusionSection">
-        <EndingComponent />
+        <PresentationComponent
+          :content="EndingContentComponent"
+          :index="3"
+          bgc="--fifth-color"
+        />
       </section>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import JavascriptComponent from "@/components/presentation_content/JavascriptComponent.vue";
-import ASMJSComponent from "@/components/presentation_content/ASMJSComponent.vue";
-import WASMComponent from "@/components/presentation_content/WASMComponent.vue";
-import EndingComponent from "@/components/presentation_content/EndingComponent.vue";
+import JavascriptContentComponent from "@/components/presentation_content/JavascriptContentComponent.vue";
+import ASMJSContentComponent from "@/components/presentation_content/ASMJSContentComponent.vue";
+import WASMContentComponent from "@/components/presentation_content/WASMContentComponent.vue";
+import EndingContentComponent from "@/components/presentation_content/EndingContentComponent.vue";
+
 import NavigationBarComponent from "@/components/ui/NavigationBarComponent.vue";
 import { ref, watch } from "vue";
 import { useUiStore } from "@/stores/ui";
+import PresentationComponent from "@/components/PresentationComponent.vue";
 
 const jsSection = ref(null);
 const asmjsSection = ref(null);
