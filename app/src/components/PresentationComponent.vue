@@ -1,5 +1,5 @@
 <template>
-  <div id="mainContent" ref="mainContent">
+  <div id="mainContent" ref="mainContent" v-bind:class="{disabledScrolling: ui.isTransitioning}">
     <div class="spacer"></div>
     <component v-bind:is="props.content" />
     <div class="spacer"></div>
@@ -17,7 +17,6 @@ const ui = useUiStore();
 const mainContent: Ref<HTMLElement | null> = ref(null);
 
 onMounted(() => {
-  console.log(props.content)
   let lastScrollTop = 0;  // used to save the vertical delta of the main content element of the last scroll down
   let last0Hit = NaN;  // used to save the last ms timestamp the scroll hit the top of the main content
   let lastEndHit = NaN;  // used to save the last ms timestamp the scroll hit the bottom of the main content
@@ -70,5 +69,8 @@ onMounted(() => {
   width: 100vw;
   overflow-y: scroll;
   padding: 2rem;
+}
+.disabled-scrolling {
+  overflow-y: hidden !important;
 }
 </style>

@@ -45,26 +45,33 @@ import WASMContentComponent from "@/components/presentation_content/WASMContentC
 import EndingContentComponent from "@/components/presentation_content/EndingContentComponent.vue";
 
 import NavigationBarComponent from "@/components/ui/NavigationBarComponent.vue";
-import { ref, watch } from "vue";
+import {  ref, watch } from "vue";
 import { useUiStore } from "@/stores/ui";
 import PresentationComponent from "@/components/PresentationComponent.vue";
 
-const jsSection = ref(null);
-const asmjsSection = ref(null);
-const wasmSection = ref(null);
-const conclusionSection = ref(null);
+const jsSection = ref<HTMLElement | null>(null);
+const asmjsSection = ref<HTMLElement | null>(null);
+const wasmSection = ref<HTMLElement | null>(null);
+const conclusionSection = ref<HTMLElement | null>(null);
 
 const sections = [
   jsSection, asmjsSection, wasmSection, conclusionSection
 ]
 
 const ui = useUiStore();
-
-
-
+const preventUserFromScrolling = (evt: Event) => {
+  evt.preventDefault()
+}
 watch(() => ui.currentSectionIndex, (v, ov) => {
   if (v < sections.length) {
-    sections[v].value.scrollIntoView({
+    ui.isTransitioning = true;
+    console.log(sections[v].value);
+    window.addEventListener("wheel", preventUserFromScrolling, {passive: false})
+    setTimeout(() => {
+      ui.isTransitioning = false
+      window.removeEventListener("wheel", preventUserFromScrolling)
+    }, 500);
+    sections[v].value!.scrollIntoView({
       behavior: "smooth"
     });
   }
