@@ -66,7 +66,6 @@ onMounted(() => {
 #mainContent {
   color: var(--vt-c-black-soft);
   height: 100vh;
-  width: 100vw;
   overflow-y: scroll;
   padding: 2rem;
 }

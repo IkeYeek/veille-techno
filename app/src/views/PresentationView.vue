@@ -1,95 +1,104 @@
 <template>
+  <nav>
+    <NavigationBarComponent :pages="prez" />
+  </nav>
   <main>
-    <div>
-      <nav>
-        <NavigationBarComponent />
-      </nav>
-    </div>
-    <div id="articles">
-      <section ref="jsSection">
-        <PresentationComponent
-          :content="JavascriptContentComponent"
-          :index="0"
-          bgc="--js-color"
-        />
-      </section>
-      <section ref="asmjsSection">
-        <PresentationComponent
-          :content="ASMJSContentComponent"
-          :index="1"
-          bgc="--third-color"
-        />
-      </section>
-      <section ref="wasmSection">
-        <PresentationComponent
-          :content="WASMContentComponent"
-          :index="2"
-          bgc="--wasm-color"
-        />
-      </section>
-      <section ref="conclusionSection">
-        <PresentationComponent
-          :content="EndingContentComponent"
-          :index="3"
-          bgc="--fifth-color"
-        />
-      </section>
+    <div v-for="(page, idx) in prez" :ref="el => {sliders[idx] = el}">
+      <SliderComponent class="sliderComponent" :slides="page.slides" :background-color="page.backgroundColor" :idx="idx" />
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import JavascriptContentComponent from "@/components/presentation_content/JavascriptContentComponent.vue";
-import ASMJSContentComponent from "@/components/presentation_content/ASMJSContentComponent.vue";
-import WASMContentComponent from "@/components/presentation_content/WASMContentComponent.vue";
-import EndingContentComponent from "@/components/presentation_content/EndingContentComponent.vue";
-
-import NavigationBarComponent from "@/components/ui/NavigationBarComponent.vue";
-import {  ref, watch } from "vue";
+import NavigationBarComponent from "@/components/ui/NavigationBarComponent.vue"
+import SliderComponent from "@/components/slides/SliderComponent.vue";
+import { onMounted, ref, watch } from "vue";
 import { useUiStore } from "@/stores/ui";
-import PresentationComponent from "@/components/PresentationComponent.vue";
 
-const jsSection = ref<HTMLElement | null>(null);
-const asmjsSection = ref<HTMLElement | null>(null);
-const wasmSection = ref<HTMLElement | null>(null);
-const conclusionSection = ref<HTMLElement | null>(null);
-
-const sections = [
-  jsSection, asmjsSection, wasmSection, conclusionSection
-]
+import { SlideJS1, SlideJS2 } from "@/components/slides/js/SlideJS"
+import { SlideASMJS1 } from "@/components/slides/asmjs/SlideASMJS"
+import type { ISlide } from "@/types";
 
 const ui = useUiStore();
-const preventUserFromScrolling = (evt: Event) => {
-  evt.preventDefault()
-}
-watch(() => ui.currentSectionIndex, (v, ov) => {
-  if (v < sections.length) {
-    ui.isTransitioning = true;
-    console.log(sections[v].value);
-    window.addEventListener("wheel", preventUserFromScrolling, {passive: false})
-    setTimeout(() => {
-      ui.isTransitioning = false
-      window.removeEventListener("wheel", preventUserFromScrolling)
-    }, 500);
-    sections[v].value!.scrollIntoView({
-      behavior: "smooth"
-    });
+
+const slider0 = ref<HTMLDivElement | null>(null);
+const slider1 = ref<HTMLDivElement | null>(null);
+const slider2 = ref<HTMLDivElement | null>(null);
+const slider3 = ref<HTMLDivElement | null>(null);
+
+const sliders = ref<Array<HTMLDivElement>>([]);
+
+const firstPrezSlides = [SlideJS1, SlideJS2, SlideASMJS1, SlideJS1, SlideASMJS1]
+const secondPrezSlides = [SlideASMJS1]
+const thirdPrezSlides = [SlideASMJS1]
+const fourthPrezSlides = [SlideASMJS1]
+
+const prez: Array<ISlide> = [
+  {
+    backgroundColor: "var(--js-color)",
+    slides: firstPrezSlides,
+    title: "Javascript",
+  },
+  {
+    backgroundColor: "var(--third-color)",
+    slides: secondPrezSlides,
+    title: "ASM.js"
+  },
+  {
+    backgroundColor: "var(--wasm-color)",
+    slides: thirdPrezSlides,
+    title: "WASM"
+  },
+  {
+    backgroundColor: "var(--fifth-color)",
+    slides: fourthPrezSlides,
+    title: "Conclusion"
   }
+]
+
+watch(() => ui.currentPage, (value, oldValue) => {
+  if (value >= 0 && value < 4 && oldValue !== value) {
+    sliders.value[value].scrollIntoView({
+      behavior: "smooth"
+    })
+  }
+});
+
+onMounted(() => {
+  document.addEventListener("keyup", (keyevt) => {
+    keyevt.preventDefault();
+    switch (keyevt.key) {
+      case "ArrowUp":
+        ui.lastPage();
+        break;
+      case "ArrowDown":
+        ui.nextPage();
+        break;
+      case "ArrowLeft":
+        ui.lastSlide();
+        break;
+      case "ArrowRight":
+        ui.nextSlide();
+        break;
+    }
+  }, { passive: false });
+
+  document.addEventListener("wheel", (wheelevt) => {
+    wheelevt.preventDefault();
+    if (Math.abs(wheelevt.deltaX) > 50) {
+      if (wheelevt.deltaX > 0) {
+        ui.nextSlide(true);
+      } else {
+        ui.lastSlide(true);
+      }
+    }
+  }, { passive: false });
+
 })
-
-
-
 </script>
 
 <style scoped>
-#articles {
-  display: flex;
-  flex-direction: column;
-}
-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+main {
   width: 100vw;
 }
 nav {
@@ -105,6 +114,10 @@ nav {
   align-items: center;
   justify-content: center;
 }
+
+main {
+  margin-top: 9vh;
+}
 /* Hide scrollbar for Chrome, Safari and Opera */
 *::-webkit-scrollbar {
   display: none;
@@ -114,5 +127,10 @@ nav {
 * {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+.sliderComponent {
+  width: 100vw;
+  height: 100vh;
 }
 </style>
